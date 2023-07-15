@@ -1,3 +1,3 @@
-# tkinter-map
+# Tkmap
 
 **Efficient web map canvas for tkinter.**
