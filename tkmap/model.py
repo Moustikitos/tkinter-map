@@ -14,6 +14,7 @@ class MapModel:
     tile_h = 256
     headers = {"User-agent": "tkmap/0.1"}
     a = 6378137.0
+    zoom_max = 19
 
     @property
     def tilesize(obj) -> Tuple[int, int]:
@@ -65,7 +66,6 @@ class OpenStreetMap(MapModel):
         "https://c.tile.openstreetmap.org/{zoom}/{col}/{row}.png",
     ]
     name = "openstreetmap"
-    zoom_max = 19
 
 
 class GoogleMap(MapModel):
@@ -77,7 +77,6 @@ class GoogleMap(MapModel):
         "https://mt3.google.com/vt/lyrs=m&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
     ]
     name = "google-map"
-    zoom_max = 19
 
 
 class GoogleSat(MapModel):
@@ -89,4 +88,3 @@ class GoogleSat(MapModel):
         "https://mt3.google.com/vt/lyrs=s&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
     ]
     name = "google-satellite"
-    zoom_max = 19
