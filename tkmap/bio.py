@@ -57,7 +57,6 @@ class TileWorker(threading.Thread):
         self.result = result
         self.db_name = db_name
         self.daemon = True
-        self.stop = threading.Event()
         # initialize url opener if it does not exist. It is designed to handle
         # http and https requests
         if TileWorker.opener is None:
@@ -72,20 +71,18 @@ class TileWorker(threading.Thread):
 
     def kill(self) -> None:
         "Stop the forever loop"
-        self.stop.set()
         self.job.put([None, None])  # unlock the loop blocked on the queue
 
     def run(self) -> None:
         "Forever loop"
         db = Database(self.db_name)
-        while not self.stop.is_set():
+        while True:
             try:
                 # tag is a formated string "{zoom}_{row}_{col}"
                 # model is a model.MapModel object
                 tag, model = self.job.get()
                 if tag is None:
-                    # should be done using `TileWorker.kill` method
-                    raise StopWorkException("stop signal received")
+                    break
                 zoom, row, col = [int(e) for e in tag.split("_")]
                 data = db.get(zoom, row, col)  # False if not found
                 if not data:
@@ -97,14 +94,13 @@ class TileWorker(threading.Thread):
                 self.result.put(
                     [tag, base64.b64decode(data).decode("utf-8")]
                 )
-            except StopWorkException as error:
-                logging.info(f" -> {__class__.__name__}: {error}")
             except Exception as error:
                 logging.error(
                     f" -> {__class__.__name__}: {error}",
                     # exc_info=True
                 )
         db.close()
+        logging.info(f" -> {__class__.__name__}: {self} exiting")
 
     def get(self, url: str, headers: dict = {}) -> str:
         """Download tile from server.
