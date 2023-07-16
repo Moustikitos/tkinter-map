@@ -4,15 +4,25 @@
 
 ## Install
 
+### Version 0.1
+
 ```bash
 python -m pip install tkinter-map
+```
+
+### Developpment version
+
+```bash
+python -m pip install git+https://github.com/Moustikitos/tkinter-map.git@master
 ```
 
 ## Requirement
 
 If you plan to use `Tkmap` widget with map providers sending JPEG-based tiles,
 it is recommended to install the `tcl` package
-[`tkimg`](https://sourceforge.net/projects/tkimg/). Binaries can be extracted in `.tcl` directory at the root of `tkmap` package.
+[`tkimg`](https://sourceforge.net/projects/tkimg/). Binaries can be extracted
+in `.tcl` directory at the root of `tkmap` package (ie the one containing the
+`__init__.py` module).
 
 ## Use
 
@@ -24,3 +34,15 @@ it is recommended to install the `tcl` package
 ```
 
 ![Tkmap widget](/widget.png)
+
+## Features
+
+- [x] Open Street map, Google map and Google satellite available
+- [x] Zoom, pan and fast pan mouse action
+- [x] latitude longitude pixel location
+- [x] Tile caching
+
+### Ongoing work
+
+- [ ] location format and projection
+- [ ] Custom map
