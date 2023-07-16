@@ -21,5 +21,5 @@ def load_img_package(tk):
     except tkinter.TclError as error:
         logging.error(
             f" -> {__name__}: {error} - "
-            "you may not be able to see JPEG-based-tile maps"
+            "you may not be able to see JPEG-based tile maps"
         )

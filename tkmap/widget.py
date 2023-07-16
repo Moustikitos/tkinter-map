@@ -139,7 +139,7 @@ class Tkmap(tkinter.Canvas):
 
     def __init__(self, master=None, cnf={}, **kw) -> None:
         self.framerate = kw.pop("framerate", 4)
-        self.cachesize = kw.pop("framerate", 500)
+        self.cachesize = kw.pop("cachesize", -1)
 
         tkinter.Canvas.__init__(self, master, cnf, **kw)
         self["xscrollincrement"] = self["yscrollincrement"] = 1
@@ -390,13 +390,13 @@ class Tkmap(tkinter.Canvas):
 class Cache(dict):
 
     def __init__(self, *args, **kwargs) -> None:
-        self.size = kwargs.pop("size", 150)
+        self.size = kwargs.pop("size", -1)
         self.store = collections.deque()
         self.update(dict(*args, **kwargs))
 
     def __setitem__(self, key: str, value: Tile) -> None:
         self.store.append(key)
-        if len(self.store) > self.size:
+        if self.size > 0 and len(self.store) > self.size:
             tile = self.pop(self.store[0])
             tile.clear()
         dict.__setitem__(self, key, value)
