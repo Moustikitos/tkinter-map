@@ -1,4 +1,8 @@
 # -*- coding:utf-8 -*-
+"""
+Basic input/output module.
+"""
+
 import os
 import ssl
 import queue
@@ -18,32 +22,44 @@ class StopWorkException(Exception):
 
 class TileWorker(threading.Thread):
     """
-    Tile downloader daemon. The only task to do is getting tile url from
-    job queue and pushing downloaded data to result queue.
+    Tile downloader daemon. It gets data from sqlite database or from url
+    request if not found. It works with two LIFO queues. `TileWorker` is a
+    subclass of `threading.Thread`, it is set as a `daemon` on initialization
+    and starts immediately.
 
     Attributes:
-        job (queue.Queue): queue from where url are pulled.
-        result (queue.Queue): queue where data are pushed into.
-
-    Args:
-        job (queue.Queue): queue from where url are pulled.
-        result (queue.Queue): queue where data are pushed into.
+        timeout (int): (class attribute) timeout delay when tile data is
+            requested from url.
+        opener (urllib.request.OpenerDirector): (class attribute) url opener
+            used by all `TileWorker` intances. It is set only with the first
+            class instanciation.
+        job (queue.Queue): queue from where tile tag and map model.
+        result (queue.Queue): queue where tile tag and data are pushed into.
+        db_name (str): database base name.
+        stop (threading.Event): event used to stop forever loop.
     """
 
-    # LOCK = threading.Lock()
     timeout = 5
     opener = None
 
     def __init__(
         self, job: queue.Queue, result: queue.Queue, db_name: str
     ) -> None:
+        """
+        Args:
+            job (queue.Queue): queue from where tile tag and map model.
+            result (queue.Queue): queue where tile tag and data are pushed
+                into.
+            db_name (str): database base name.
+        """
         threading.Thread.__init__(self)
         self.job = job
         self.result = result
         self.db_name = db_name
         self.daemon = True
         self.stop = threading.Event()
-
+        # initialize url opener if it does not exist. It is designed to handle
+        # http and https requests
         if TileWorker.opener is None:
             ctx = ssl.create_default_context()
             ctx.check_hostname = False
@@ -55,41 +71,55 @@ class TileWorker(threading.Thread):
         self.start()
 
     def kill(self) -> None:
+        "Stop the forever loop"
         self.stop.set()
-        self.job.put([None, None])
+        self.job.put([None, None])  # unlock the loop blocked on the queue
 
     def run(self) -> None:
-        self.db = Database(self.db_name)  # sqlite
+        "Forever loop"
+        db = Database(self.db_name)
         while not self.stop.is_set():
             try:
+                # tag is a formated string "{zoom}_{row}_{col}"
+                # model is a model.MapModel object
                 tag, model = self.job.get()
                 if tag is None:
+                    # should be done using `TileWorker.kill` method
                     raise StopWorkException("stop signal received")
-
                 zoom, row, col = [int(e) for e in tag.split("_")]
-                data = self.db.get(zoom, row, col)
-
+                data = db.get(zoom, row, col)  # False if not found
                 if not data:
+                    # download tile using model information
                     url = model.get_tile_url(row, col, zoom)
                     data = self.get(url, model.headers)
-                    self.db.put(zoom, row, col, data)
-
+                    db.put(zoom, row, col, data)
+                # sends tag and data to the result queue
                 self.result.put(
                     [tag, base64.b64decode(data).decode("utf-8")]
                 )
             except StopWorkException as error:
                 logging.info(f" -> {__class__.__name__}: {error}")
             except Exception as error:
-                logging.error(f" -> {__class__.__name__}: {error}")
-        self.db.close()
+                logging.error(
+                    f" -> {__class__.__name__}: {error}",
+                    # exc_info=True
+                )
+        db.close()
 
-    def get(self, url: str, headers: dict) -> str:
+    def get(self, url: str, headers: dict = {}) -> str:
+        """Download tile from server.
+
+        Args:
+            url (str): tile ressource location.
+            headers (dict): headers used in request.
+
+        Returns
+            str: base64-encoded data.
+        """
         req = Request(url, None, headers)
         res = TileWorker.opener.open(req, timeout=TileWorker.timeout)
-        data = res.read().decode(
-            res.headers.get_content_charset("latin-1")
-        ).encode("utf-8")
-        return base64.b64encode(data).decode("utf-8")
+        data = res.read().decode(res.headers.get_content_charset("latin-1"))
+        return base64.b64encode(data.encode("utf-8")).decode("utf-8")
 
 
 class Database:
@@ -120,7 +150,7 @@ class Database:
         else:
             return False
 
-    def put(self, zoom: int, row: int, col: int, data: str) -> str:
+    def put(self, zoom: int, row: int, col: int, data: str) -> None:
         with Database.LOCK:
             self.sqlite.execute(
                 "INSERT INTO tiles(zoom, row, col, data) VALUES(?,?,?,?);",
