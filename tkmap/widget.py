@@ -1,13 +1,15 @@
 # -*- coding:utf-8 -*-
+"""
+This module provides the core widget of tkmap package.
+"""
+
 import os
 import time
 import json
 import queue
 import tkinter
 import logging
-import threading
 import functools
-import collections
 
 from tkmap import JSON, load_img_package, bio, model
 from typing import List, Tuple
@@ -15,6 +17,23 @@ from tkinter import ttk
 
 
 class Tile:
+    """
+    `Tile` class to leverage the tcl interpreter to perform fast image
+    operation on canvas.
+
+    Attributes:
+        TILE_CMD_CREATE (str): (class attribute) tcl command pattern to create
+            the image canvas item.
+        TILE_CMD_SHOW (str): (class attribute) tcl command pattern to show the
+            image canvas item.
+        TILE_CMD_HIDE (str): (class attribute) tcl command pattern to hide the
+            image canvas item.
+        TILE_CMD_CLEAR (str): (class attribute) tcl command pattern to delete
+            the image data.
+        tkeval (callable): (class attribute) the tk `eval` command.
+        tkcall (callable): (class attribute) the tk `call` command.
+        w_name (str): master canvas name.
+    """
 
     TILE_CMD_CREATE = \
         "if {[%(w)s find withtag %(t)s] eq {}} { " +\
@@ -24,17 +43,31 @@ class Tile:
         "-anchor nw -image %(n)s -tags {%(t)s tile} -state hidden] }"
     TILE_CMD_SHOW = "%(w)s itemconfig %(t)s -state normal; update"
     TILE_CMD_HIDE = "%(w)s itemconfig %(t)s -state hidden"
-    TILE_CMD_CLEAR = "image delete %(t)s"
+    TILE_CMD_CLEAR = "%(w)s delete %(t)s; image delete %(t)s"
     tkeval = None
     tkcall = None
 
-    def __init__(self, master: tkinter.BaseWidget) -> None:
+    def __init__(self, master: tkinter.Canvas) -> None:
+        """
+        Args:
+            master (tkinter.Canvas): master canvas instance on wich tile is
+            about to be managed.
+        """
+        # initialize tk `eval` and `call` shortcuts they not exist.
         if Tile.tkeval is None or Tile.tkcall is None:
             Tile.tkeval = master.tk.eval
             Tile.tkcall = master.tk.call
         self.w_name = master._w
 
     def create(self, tag: str, data: str) -> None:
+        """
+        Create the image data inside tcl interpreter and generate the
+        associated canvas image-item.
+
+        Args:
+            tag (str): tile tag with format `{zoom}_{row}_{col}`.
+            data (str): image data as string.
+        """
         imgtk = \
             Tile.tkcall("image", "create", "photo", tag, "-data", data)
         _, row, col = tag.split("_")
@@ -46,14 +79,19 @@ class Tile:
         self._imgtk = imgtk
 
     def show(self) -> None:
+        "Reveal the image item on the canvas."
         logging.info(f" -> {__class__.__name__} {self._imgtk} show")
         Tile.tkeval(self._show)
 
     def hide(self) -> None:
+        "Hide the image item from the canvas."
         logging.info(f" -> {__class__.__name__} {self._imgtk} hidden")
         Tile.tkeval(self._hide)
 
     def clear(self) -> None:
+        """
+        Delete the image item from canvas and image data from tcl interpreter.
+        """
         logging.info(f" -> {__class__.__name__} {self._imgtk} cleared")
         Tile.tkeval(self._clear)
 
@@ -102,7 +140,10 @@ def _drawloop(obj: tkinter.Canvas, ms: int) -> None:
                 if tag in obj.QUEUED.queue:
                     obj.QUEUED.queue.remove(tag)
         except Exception as error:
-            logging.error(f" -> _drawloop error: {error} - tag {tag}")
+            logging.error(
+                f" -> _drawloop error: {error} - tag {tag}",
+                # exc_info=True
+            )
     # clean _after_tasks list
     for callback in obj._after_tasks[:]:
         # if task info unavailable (it raises TclError) then it is running or
@@ -115,7 +156,7 @@ def _drawloop(obj: tkinter.Canvas, ms: int) -> None:
 
 class Tkmap(tkinter.Canvas):
 
-    LOCK = threading.Lock()
+    # LOCK = threading.Lock()
 
     @property
     def xnw(obj) -> float:
@@ -139,15 +180,16 @@ class Tkmap(tkinter.Canvas):
 
     def __init__(self, master=None, cnf={}, **kw) -> None:
         self.framerate = kw.pop("framerate", 4)
-        self.cachesize = kw.pop("cachesize", -1)
+        self.cachesize = kw.pop("cachesize", 500)
 
         tkinter.Canvas.__init__(self, master, cnf, **kw)
         self["xscrollincrement"] = self["yscrollincrement"] = 1
 
-        ttk.Label(
+        self.coords = ttk.Label(
             relief="solid", padding=(5, 1),
             font=("calibri", "8"), textvariable="coords"
-        ).place(y=4, relx=0.5, anchor="n")
+        )
+        self.coords.place(y=4, relx=0.5, anchor="n")
 
         load_img_package(self.tk)
 
@@ -202,29 +244,27 @@ class Tkmap(tkinter.Canvas):
 
     def close(self) -> None:
         self._stop()
+        self._drawarea = ()
         self.clear_canvas()
         self.save_location()
         self.mapmodel = None
 
     def center(self, px: float = None, py: float = None) -> None:
-        px = px or self.winfo_width()/2
-        py = py or self.winfo_height()/2
-        nrow, ncol = self.mapsize
-        width = ncol * self.mapmodel.tile_w
-        height = nrow * self.mapmodel.tile_h
+        x1, y1, x2, y2 = [int(e) for e in self["scrollregion"].split()]
+        width, height = x2 - x1, y2 - y1
         x, y = self.mapmodel.ll2xy(*self.latlon, zoom=self.zoom)
         self.xview_moveto(
-            (width * x/width - px or self.winfo_width()/2) / width
+            (width * x/width - (px or self.winfo_width()/2)) / width
         )
         self.yview_moveto(
-            (height * y/height - py or self.winfo_height()/2) / height
+            (height * y/height - (py or self.winfo_height()/2)) / height
         )
 
     def clear_canvas(self, keep_cache: bool = False) -> None:
         if not keep_cache:
             self.cache.clear()
         else:
-            [tile.hide() for tile in self.cache.values()]
+            self.cache.hide()
 
     def destroy(self) -> None:
         self.close()
@@ -274,10 +314,10 @@ class Tkmap(tkinter.Canvas):
         self.unbind("<MouseWheel>")
         self.unbind("<Configure>")
         self.unbind("<Control-B1-Motion>")
-        with Tkmap.LOCK:
-            while len(self.workers):
-                self.workers.pop(0).kill()
-            self._clear_queues()
+        self._clear_queues()
+        while len(self.workers):
+            worker = self.workers.pop(0)
+            worker.kill()
 
     def _update_drawarea(self) -> None:
         tw, th = self.mapmodel.tilesize
@@ -329,13 +369,16 @@ class Tkmap(tkinter.Canvas):
         except tkinter.TclError as error:
             # due to cache size limitation some images may be deleted
             # during the tcl command execution
-            logging.info(f" -> _update error: {error}")
+            logging.info(
+                f" -> _update error: {error}",
+                # exc_info=True
+            )
 
     def _clear_queues(self) -> None:
-        with self.JOB.mutex:
-            self.JOB.queue.clear()
         with self.DONE.mutex:
             self.DONE.queue.clear()
+        with self.JOB.mutex:
+            self.JOB.queue.clear()
         with self.QUEUED.mutex:
             self.QUEUED.queue.clear()
 
@@ -353,7 +396,7 @@ class Tkmap(tkinter.Canvas):
     def on_button_1_motion(self, event: tkinter.Event, gain: int = 1) -> None:
         self.tk.call(self._w, 'scan', 'dragto', event.x, event.y, gain)
         self._update_drawarea()
-        # speed computation
+        # speed cursor computation
         t, x, y = time.time(), event.x, event.y
         dt = t - self._tps[0]
         if dt >= 0.01:
@@ -379,32 +422,61 @@ class Tkmap(tkinter.Canvas):
 
         self.save_coords(event.x, event.y)
         self.zoom = zoom
-        with Tkmap.LOCK:
-            self._clear_queues()
-            self.clear_canvas(keep_cache=True)
-            self.mapmodel.init(self)
-            self.center(event.x, event.y)
-            self._update_drawarea()
+
+        self._clear_queues()
+        self.clear_canvas(keep_cache=True)
+        self.mapmodel.init(self)
+        self.center(event.x, event.y)
+        self._drawarea = ()
+        self._update_drawarea()
 
 
 class Cache(dict):
 
+    HIDE_ALL = \
+        "foreach tag {%(tags)s} {%(widget)s itemconfig $tag -state hidden};"
+    DELETE_ALL = \
+        'foreach tag {%(tags)s} {image delete $tag}; %(widget)s delete "all";'
+
     def __init__(self, *args, **kwargs) -> None:
         self.size = kwargs.pop("size", -1)
-        self.store = collections.deque()
+        self.store = []
         self.update(dict(*args, **kwargs))
 
     def __setitem__(self, key: str, value: Tile) -> None:
         self.store.append(key)
         if self.size > 0 and len(self.store) > self.size:
-            tile = self.pop(self.store[0])
-            tile.clear()
+            popped = False
+            i = 0
+            while not popped and i < len(self):
+                tile = self[self.store[i]]
+                if tile.tkeval(
+                    f"{tile.w_name} itemcget {tile._imgtk} -state"
+                ) == 'hidden':
+                    logging.info(
+                        f" -> {__class__.__name__} {tile._imgtk} popped"
+                    )
+                    self.pop(self.store[i]).clear()
+                    popped = True
+                i += 1
         dict.__setitem__(self, key, value)
 
+    def hide(self) -> None:
+        if len(self.store):
+            tile0 = self[self.store[0]]
+            tile0.tkeval(
+                Cache.HIDE_ALL %
+                {"tags": " ".join(self.keys()), "widget": tile0.w_name}
+            )
+
     def clear(self) -> None:
-        self.store.clear()
-        for tile in self.values():
-            tile.clear()
+        if len(self.store):
+            tile0 = self[self.store[0]]
+            tile0.tkeval(
+                Cache.DELETE_ALL %
+                {"tags": " ".join(self.keys()), "widget": tile0.w_name}
+            )
+            self.store.clear()
         dict.clear(self)
 
     def pop(self, key: str) -> Tile:
@@ -413,5 +485,5 @@ class Cache(dict):
 
     def popitem(self) -> Tuple[str, Tile]:
         item = dict.popitem(self)
-        self.Store.remove(item[0])
+        self.store.remove(item[0])
         return item
