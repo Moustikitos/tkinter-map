@@ -33,16 +33,20 @@ in `.tcl` directory at the root of `tkmap` package (ie the one containing the
 >>> canvas.open(model.OpenStreetMap(), zoom=10, location=(48.645272, 1.841411))
 ```
 
-![Tkmap widget](/widget.png)
+![Tkmap widget](./docs/widget.png)
 
 ## Features
 
-- [x] Open Street map, Google map and Google satellite available
+- [x] Tile set:
+  - [x] Google map
+  - [x] Google satellite
+  - [x] Open Street map
+  - [x] Mapbox satellite
+- [x] Custom map
 - [x] Zoom, pan and fast pan mouse action
-- [x] latitude longitude pixel location
+- [x] Latitude longitude pixel location
 - [x] Tile caching
 
 ### Ongoing work
 
-- [ ] location format and projection
-- [ ] Custom map
+- [ ] Location format and projection
