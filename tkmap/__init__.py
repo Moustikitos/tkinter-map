@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import os
 import tkinter
 import logging
@@ -11,6 +12,12 @@ os.makedirs(JSON, exist_ok=True)
 
 
 def load_img_package(tk):
+    """
+    It tries to load tke `imgtk` tcl package to add JPEG codec to the tcl
+    interpreter. It logs an error if `imgtk` package not found. To install
+    it locally you can extract the `imgtk` package folder in a `.tcl` folder
+    at the root of `tkmap` package (ie containing the `__init__.py`).
+    """
     img_path = os.path.normpath(
         os.path.join(HOME, ".tcl")
     ).replace(os.sep, "/")

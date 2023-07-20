@@ -16,10 +16,6 @@ from urllib.request import HTTPSHandler
 from tkmap import MAPS
 
 
-class StopWorkException(Exception):
-    "Used to stop the worker loop"
-
-
 class TileWorker(threading.Thread):
     """
     Tile downloader daemon. It gets data from sqlite database or from url
@@ -126,10 +122,19 @@ class TileWorker(threading.Thread):
 
 
 class Database:
+    """
+    `sqlite3` database implementation used for tile caching.
+    """
 
     LOCK = threading.Lock()
 
     def __init__(self, name: str) -> None:
+        """
+        Args:
+            name (str): database name. Database is created in the tkmap.MAPS
+            folder with ".sqlm" extention.
+        """
+
         sqlite = sqlite3.connect(os.path.join(MAPS, name + ".sqlm"))
         sqlite.row_factory = sqlite3.Row
         sqlite.execute(
@@ -143,7 +148,19 @@ class Database:
         sqlite.commit()
         self.sqlite = sqlite
 
-    def get(self, zoom: int, row: int, col: int) -> str:
+    def get(self, zoom: int, row: int, col: int) -> str | bool:
+        """
+        Get a tile from database using row, column and zoom parameters.
+
+        Args:
+            zoom (int): tile set zoom level.
+            row (int): tile set row.
+            col (int): tile set column.
+
+        Returns:
+            str | bool: base64-encoded data if any tile found else `False`
+        """
+
         req = self.sqlite.execute(
             "SELECT data FROM tiles WHERE zoom=? AND row=? AND col=?;",
             (zoom, row, col)
@@ -154,14 +171,26 @@ class Database:
             return False
 
     def put(self, zoom: int, row: int, col: int, data: str) -> None:
+        """
+        Set tile data in database with row, column and zoom informations.
+
+        Args:
+            zoom (int): tile set zoom level.
+            row (int): tile set row.
+            col (int): tile set column.
+            data (str): base64-encoded string.
+        """
         with Database.LOCK:
             self.sqlite.execute(
-                "INSERT INTO tiles(zoom, row, col, data) VALUES(?,?,?,?);",
-                [zoom, row, col, data]
+                "INSERT OR REPLACE INTO tiles(zoom, row, col, data) "
+                "VALUES(?,?,?,?);", [zoom, row, col, data]
             )
             self.sqlite.commit()
 
     def close(self) -> None:
+        """
+        Save and close database.
+        """
         with Database.LOCK:
             self.sqlite.commit()
         self.sqlite.close()

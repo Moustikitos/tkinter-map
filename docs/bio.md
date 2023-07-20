@@ -4,16 +4,6 @@
 
 Basic input/output module.
 
-<a id="tkmap.bio.StopWorkException"></a>
-
-## StopWorkException Objects
-
-```python
-class StopWorkException(Exception)
-```
-
-Used to stop the worker loop
-
 <a id="tkmap.bio.TileWorker"></a>
 
 ## TileWorker Objects
@@ -93,4 +83,75 @@ Download tile from server.
 **Returns**:
 
 - `str` - base64-encoded data.
+
+<a id="tkmap.bio.Database"></a>
+
+## Database Objects
+
+```python
+class Database()
+```
+
+`sqlite3` database implementation used for tile caching.
+
+<a id="tkmap.bio.Database.__init__"></a>
+
+#### \_\_init\_\_
+
+```python
+def __init__(name: str) -> None
+```
+
+**Arguments**:
+
+- `name` _str_ - database name. Database is created in the tkmap.MAPS
+  folder with ".sqlm" extention.
+
+<a id="tkmap.bio.Database.get"></a>
+
+#### get
+
+```python
+def get(zoom: int, row: int, col: int) -> str | bool
+```
+
+Get a tile from database using row, column and zoom parameters.
+
+**Arguments**:
+
+- `zoom` _int_ - tile set zoom level.
+- `row` _int_ - tile set row.
+- `col` _int_ - tile set column.
+  
+
+**Returns**:
+
+  str | bool: base64-encoded data if any tile found else `False`
+
+<a id="tkmap.bio.Database.put"></a>
+
+#### put
+
+```python
+def put(zoom: int, row: int, col: int, data: str) -> None
+```
+
+Set tile data in database with row, column and zoom informations.
+
+**Arguments**:
+
+- `zoom` _int_ - tile set zoom level.
+- `row` _int_ - tile set row.
+- `col` _int_ - tile set column.
+- `data` _str_ - base64-encoded string.
+
+<a id="tkmap.bio.Database.close"></a>
+
+#### close
+
+```python
+def close() -> None
+```
+
+Save and close database.
 
