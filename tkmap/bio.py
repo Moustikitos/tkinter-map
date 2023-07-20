@@ -87,14 +87,16 @@ class TileWorker(threading.Thread):
                 data = db.get(zoom, row, col)  # False if not found
                 if not data:
                     # download tile using model information
-                    url = model.get_tile_url(row, col, zoom)
-                    data = self.get(url, model.headers)
+                    url, headers = model.get_tile_url(row, col, zoom)
+                    logging.debug(f" -> {__class__.__name__}: {url}")
+                    data = self.get(url, headers)
                     db.put(zoom, row, col, data)
                 # sends tag and data to the result queue
                 self.result.put(
                     [tag, base64.b64decode(data).decode("utf-8")]
                 )
             except Exception as error:
+                self.result.put([tag, False])
                 logging.error(
                     f" -> {__class__.__name__}: {error}",
                     # exc_info=True
@@ -109,13 +111,18 @@ class TileWorker(threading.Thread):
             url (str): tile ressource location.
             headers (dict): headers used in request.
 
-        Returns
+        Returns:
             str: base64-encoded data.
         """
         req = Request(url, None, headers)
         res = TileWorker.opener.open(req, timeout=TileWorker.timeout)
-        data = res.read().decode(res.headers.get_content_charset("latin-1"))
-        return base64.b64encode(data.encode("utf-8")).decode("utf-8")
+        if res.status == 200:
+            data = res.read().decode(
+                res.headers.get_content_charset("latin-1")
+            )
+            return base64.b64encode(data.encode("utf-8")).decode("utf-8")
+        else:
+            raise Exception(f"error {res.status} - {res.reason}")
 
 
 class Database:

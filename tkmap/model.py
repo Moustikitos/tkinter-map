@@ -1,18 +1,19 @@
 # -*- coding:utf-8 -*-
+import os
 import math
+import json
 import tkinter
 import random
 
 from typing import Tuple
+from tkmap import JSON
 
 
 class MapModel:
 
-    name = "abstract"
     urls = []
     tile_w = 256
     tile_h = 256
-    headers = {"User-agent": "tkmap/0.1"}
     a = 6378137.0
     zoom_max = 19
 
@@ -20,9 +21,14 @@ class MapModel:
     def tilesize(obj) -> Tuple[int, int]:
         return obj.tile_w, obj.tile_h
 
+    def headers(self, *a, **kw) -> dict:
+        return {"User-agent": "tkmap/0.1"}
+
     def get_tile_url(self, row: int, col: int, zoom: int) -> str:
-        """return tile url from px, py coordinates"""
-        return random.choice(self.urls).format(zoom=zoom, col=col, row=row)
+        """Return tile url from row, column and zoom."""
+        return random.choice(self.urls).format(
+            zoom=zoom, col=col, row=row, **self.__dict__
+        ), self.headers()
 
     def init(self, canvas: tkinter.Canvas) -> None:
         n = 2**canvas.zoom
@@ -57,34 +63,12 @@ class MapModel:
         lon = x / n * 360.0 - 180.0
         return lat, lon
 
-
-class OpenStreetMap(MapModel):
-
-    urls = [
-        "https://a.tile.openstreetmap.org/{zoom}/{col}/{row}.png",
-        "https://b.tile.openstreetmap.org/{zoom}/{col}/{row}.png",
-        "https://c.tile.openstreetmap.org/{zoom}/{col}/{row}.png",
-    ]
-    name = "openstreetmap"
-
-
-class GoogleMap(MapModel):
-
-    urls = [
-        "https://mt0.google.com/vt/lyrs=m&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
-        "https://mt1.google.com/vt/lyrs=m&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
-        "https://mt2.google.com/vt/lyrs=m&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
-        "https://mt3.google.com/vt/lyrs=m&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
-    ]
-    name = "google-map"
-
-
-class GoogleSat(MapModel):
-
-    urls = [
-        "https://mt0.google.com/vt/lyrs=s&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
-        "https://mt1.google.com/vt/lyrs=s&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
-        "https://mt2.google.com/vt/lyrs=s&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
-        "https://mt3.google.com/vt/lyrs=s&hl=en&x={col}&y={row}&z={zoom}&s=Ga",
-    ]
-    name = "google-satellite"
+    @staticmethod
+    def load(name, **kw):
+        model = MapModel()
+        with open(os.path.join(JSON, name + ".json"), "r") as in_:
+            model.__dict__.update(json.load(in_), **kw)
+        if len(getattr(model, "urls", [])):
+            return model
+        else:
+            raise Exception("no url defined")

@@ -132,10 +132,11 @@ def _drawloop(obj: tkinter.Canvas, ms: int) -> None:
     while not obj.DONE.empty():
         try:
             tag, data = obj.DONE.get()
-            tile = Tile(obj)
-            tile.create(tag, data)
-            tile.show()
-            obj.cache[tag] = tile
+            if data:
+                tile = Tile(obj)
+                tile.create(tag, data)
+                tile.show()
+                obj.cache[tag] = tile
             with obj.QUEUED.mutex:
                 if tag in obj.QUEUED.queue:
                     obj.QUEUED.queue.remove(tag)
@@ -155,8 +156,6 @@ def _drawloop(obj: tkinter.Canvas, ms: int) -> None:
 
 
 class Tkmap(tkinter.Canvas):
-
-    # LOCK = threading.Lock()
 
     @property
     def xnw(obj) -> float:
@@ -189,7 +188,7 @@ class Tkmap(tkinter.Canvas):
             relief="solid", padding=(5, 1),
             font=("calibri", "8"), textvariable="coords"
         )
-        self.coords.place(y=4, relx=0.5, anchor="n")
+        self._place_coords = dict(y=-4, rely=1.0, relx=0.5, anchor="s")
 
         load_img_package(self.tk)
 
@@ -241,8 +240,10 @@ class Tkmap(tkinter.Canvas):
         model.init(self)
         self.center()
         self._start()
+        self.coords.place(**self._place_coords)
 
     def close(self) -> None:
+        self.coords.place_forget()
         self._stop()
         self._drawarea = ()
         self.clear_canvas()
@@ -436,7 +437,7 @@ class Cache(dict):
     HIDE_ALL = \
         "foreach tag {%(tags)s} {%(widget)s itemconfig $tag -state hidden};"
     DELETE_ALL = \
-        'foreach tag {%(tags)s} {image delete $tag}; %(widget)s delete "all";'
+        'image delete %(tags)s; %(widget)s delete "all";'
 
     def __init__(self, *args, **kwargs) -> None:
         self.size = kwargs.pop("size", -1)
