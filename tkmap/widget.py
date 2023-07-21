@@ -156,26 +156,31 @@ def _drawloop(obj: tkinter.Canvas, ms: int) -> None:
 
 
 class Tkmap(tkinter.Canvas):
+    """
+    `Tkmap` is a `tkinter.Canvas` object that leverages directly tcl code to
+    provide a smooth user experience.
+
+    Attributes:
+        coords (tkinter.Label): widget to display map coordinates.
+        framerate (int): rate of canvas update.
+        cachesize (int): number of tile stored in Tkmap cache.
+        cache (dict): tile cache.
+        mapmodel (model.MapMode): map model used to generate tile url and
+            compute map coordinates.
+        workers (List[bio.TileWorker]): List of python thread used to perform
+            tile downloads or database queries.
+    """
 
     @property
-    def xnw(obj) -> float:
-        return float(obj.tk.eval(f"{obj._w} canvasx 0"))
-
-    @property
-    def ynw(obj) -> float:
-        return float(obj.tk.eval(f"{obj._w} canvasy 0"))
-
-    @property
-    def xse(obj) -> float:
-        return float(
-            obj.tk.eval(f"{obj._w} canvasx [expr [winfo width {obj._w}]]")
-        )
-
-    @property
-    def yse(obj) -> float:
-        return float(
-            obj.tk.eval(f"{obj._w} canvasy [expr [winfo height {obj._w}]]")
-        )
+    def bbox(obj) -> tuple:
+        "Returns east, north, west and south boundaries view on canvas area."
+        return [
+            int(float(e)) for e in obj.tk.eval(
+                f"list [{obj._w} canvasx 0] [{obj._w} canvasy 0]"
+                f" [{obj._w} canvasx [expr [winfo width {obj._w}]]]"
+                f" [{obj._w} canvasy [expr [winfo height {obj._w}]]]"
+            ).split()
+        ]
 
     def __init__(self, master=None, cnf={}, **kw) -> None:
         self.framerate = kw.pop("framerate", 4)
@@ -188,7 +193,7 @@ class Tkmap(tkinter.Canvas):
             relief="solid", padding=(5, 1),
             font=("calibri", "8"), textvariable="coords"
         )
-        self._place_coords = dict(y=-4, rely=1.0, relx=0.5, anchor="s")
+        self.coords.place_configure(y=-4, rely=1.0, relx=0.5, anchor="s")
 
         load_img_package(self.tk)
 
@@ -211,13 +216,42 @@ class Tkmap(tkinter.Canvas):
         self.radius = 0
         self.zoom = 0
 
-    def save_location(self) -> None:
+    def place_widget(self, widget: str, cnf={}, **kw) -> None:
+        """
+        Place inner widgets on the canvas instance.
+
+        Args:
+            widget (str): widget attribute name to place.
+            cnf (dict): key-value pairs to place the widget.
+            **kw: keywords arguments to place the widget.
+        """
+        getattr(self, widget).place_configure(cnf, **kw)
+
+    def dump_location(self) -> None:
+        "Drops cursor location into filesystem"
         if self.mapmodel is not None:
             self.save_coords(self.winfo_width()/2, self.winfo_height()/2)
             with open(os.path.join(JSON, ".loc"), "w") as out:
                 json.dump({"zoom": self.zoom, "latlon": self.latlon}, out)
 
+    def save_coords(self, x: float = None, y: float = None) -> None:
+        """
+        Save map coordinates from canvas center or specific coordinates
+
+        Args:
+            x (float): horizontal pixel coordinates.
+            y (float): vertical pixel coordinates.
+        """
+        self.latlon = list(
+            self.mapmodel.xy2ll(
+                self.canvasx(x or self.winfo_width()/2),
+                self.canvasy(y or self.winfo_height()/2),
+                self.zoom
+            )
+        )
+
     def load_location(self) -> None:
+        "loads last saved location from filesystem"
         try:
             with open(os.path.join(JSON, ".loc"), "r") as in_:
                 return json.load(in_)
@@ -228,6 +262,17 @@ class Tkmap(tkinter.Canvas):
         self, model: model.MapModel, zoom: int = None,
         location: List[float] = None
     ) -> None:
+        """
+        Open a map.
+
+        Args:
+            model (model.MapModel): map tile provider.
+            zoom (int): zoom level to start at. If not provided, starts to 0
+                or previously saved zoom level.
+            location (List[float]): location to start at. If not provided,
+                starts at longitude 0 and latitude 0 or previously saved
+                location.
+        """
         self.close()
         data = self.load_location()
         self.zoom = zoom or data.get("zoom", 0)
@@ -240,17 +285,25 @@ class Tkmap(tkinter.Canvas):
         model.init(self)
         self.center()
         self._start()
-        self.coords.place(**self._place_coords)
+        self.coords.place()
 
     def close(self) -> None:
+        "Close the map and clear the canvas."
         self.coords.place_forget()
         self._stop()
         self._drawarea = ()
-        self.clear_canvas()
-        self.save_location()
+        self.cache.clear()
+        self.dump_location()
         self.mapmodel = None
 
     def center(self, px: float = None, py: float = None) -> None:
+        """
+        Align canvas center or coordinates to the last saved coordinates.
+
+        Args:
+            px (float): horizontal pixel coordinates.
+            py (float): vertical pixel coordinates.
+        """
         x1, y1, x2, y2 = [int(e) for e in self["scrollregion"].split()]
         width, height = x2 - x1, y2 - y1
         x, y = self.mapmodel.ll2xy(*self.latlon, zoom=self.zoom)
@@ -261,24 +314,9 @@ class Tkmap(tkinter.Canvas):
             (height * y/height - (py or self.winfo_height()/2)) / height
         )
 
-    def clear_canvas(self, keep_cache: bool = False) -> None:
-        if not keep_cache:
-            self.cache.clear()
-        else:
-            self.cache.hide()
-
     def destroy(self) -> None:
         self.close()
         tkinter.Canvas.destroy(self)
-
-    def save_coords(self, x: float = None, y: float = None) -> None:
-        self.latlon = list(
-            self.mapmodel.xy2ll(
-                self.canvasx(x or self.winfo_width()/2),
-                self.canvasy(y or self.winfo_height()/2),
-                self.zoom
-            )
-        )
 
     def _cancel_tasks(self) -> None:
         for callback in self._after_tasks:
@@ -324,16 +362,18 @@ class Tkmap(tkinter.Canvas):
         tw, th = self.mapmodel.tilesize
         nr, nc = self.mapsize
         bd = self.borderwidth
+        e, n, w, s = self.bbox
         self.drawarea = (
-            int(max(0, self.xnw//tw-bd)), int(max(0, self.ynw//th-bd)),
-            int(min(nr, self.xse//tw+bd)), int(min(nc, self.yse//th+bd))
+            max(0, e//tw-bd), max(0, n//th-bd),
+            min(nr, w//tw+bd), min(nc, s//th+bd)
         )
 
     def _update(self) -> None:
         c1, r1, c2, r2 = self.drawarea
-        radius = self.radius
+        e, n, w, s = self.bbox
         cmd = self.tk.eval
-        _w = self._w
+        r = self.radius
+        w = self._w
 
         tags_to_show = set(
             functools.reduce(
@@ -351,21 +391,18 @@ class Tkmap(tkinter.Canvas):
                 self.QUEUED.put(tag)
                 self.JOB.put([tag, self.mapmodel])
 
-        all_tiles = cmd(f"{_w} find overlapping {self['scrollregion']}")
-        tile_to_show = cmd(
-            f"{_w} find overlapping "
-            f"{self.xnw - radius} {self.ynw - radius} "
-            f"{self.xse + radius} {self.yse + radius}"
-        )
+        all_tiles = cmd(f"{w} find overlapping {self['scrollregion']}")
+        tile_to_show = \
+            cmd(f"{w} find overlapping {e - r} {n - r} {w + r} {s + r}")
         tile_to_hide = set(all_tiles.split()) - set(tile_to_show.split())
         standing_by_tiles = tags_to_show & cached_tiles
 
         try:
             cmd(
                 "foreach id {" + " ".join(tile_to_hide) + "} "
-                "{" + _w + " itemconfig $id -state hidden};"
+                "{" + w + " itemconfig $id -state hidden};"
                 "foreach tag {" + " ".join(standing_by_tiles) + "} "
-                "{" + _w + " itemconfig $tag -state normal};"
+                "{" + w + " itemconfig $tag -state normal};"
             )
         except tkinter.TclError as error:
             # due to cache size limitation some images may be deleted
@@ -410,7 +447,7 @@ class Tkmap(tkinter.Canvas):
         self.save_coords()
         if self._tps[0]:
             self._tps[0] = None
-            self._tps[1] = time.time()
+            self._tps[1] = time.time()  # needed by _drift definition
             speed_x, speed_y = self._tps[-2:]
             self.after(10, lambda: _drift(self, -speed_x, -speed_y))
 
@@ -425,7 +462,7 @@ class Tkmap(tkinter.Canvas):
         self.zoom = zoom
 
         self._clear_queues()
-        self.clear_canvas(keep_cache=True)
+        self.cache.hide()
         self.mapmodel.init(self)
         self.center(event.x, event.y)
         self._drawarea = ()
