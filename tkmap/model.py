@@ -30,12 +30,12 @@ class MapModel:
             zoom=zoom, col=col, row=row, **self.__dict__
         ), self.headers()
 
-    def init(self, canvas: tkinter.Canvas) -> None:
+    def init(self, canvas: tkinter.Canvas, borderwidth: int = 2) -> None:
         n = 2**canvas.zoom
         canvas.mapsize = n, n
         canvas["scrollregion"] = 0, 0, n*self.tile_w, n*self.tile_h
-        canvas.borderwidth = 2
-        canvas.radius = max(self.tile_h, self.tile_w) * canvas.borderwidth
+        canvas.borderwidth = borderwidth
+        canvas.radius = max(self.tile_h, self.tile_w) * borderwidth
 
     def Q(self, row: int, col: int, zoom: int) -> str:
         q = "" if zoom != 0 else "0"
