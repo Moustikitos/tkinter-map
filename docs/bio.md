@@ -112,7 +112,7 @@ def __init__(name: str) -> None
 #### get
 
 ```python
-def get(zoom: int, row: int, col: int) -> str | bool
+def get(zoom: int, row: int, col: int) -> Union[str, bool]
 ```
 
 Get a tile from database using row, column and zoom parameters.
