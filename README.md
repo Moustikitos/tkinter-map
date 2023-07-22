@@ -33,7 +33,7 @@ in `.tcl` directory at the root of `tkmap` package (ie the one containing the
 >>> canvas.open(model.OpenStreetMap(), zoom=10, location=(48.645272, 1.841411))
 ```
 
-![Tkmap widget](./docs/widget.png)
+![Tkmap widget](./docs/img/widget.png)
 
 ## Features
 
