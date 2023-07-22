@@ -14,6 +14,7 @@ import threading
 from urllib.request import Request, OpenerDirector, HTTPHandler
 from urllib.request import HTTPSHandler
 from tkmap import MAPS
+from typing import Union
 
 
 class TileWorker(threading.Thread):
@@ -148,7 +149,7 @@ class Database:
         sqlite.commit()
         self.sqlite = sqlite
 
-    def get(self, zoom: int, row: int, col: int) -> str | bool:
+    def get(self, zoom: int, row: int, col: int) -> Union[str, bool]:
         """
         Get a tile from database using row, column and zoom parameters.
 

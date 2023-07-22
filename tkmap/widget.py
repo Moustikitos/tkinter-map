@@ -51,7 +51,7 @@ class Tile:
         """
         Args:
             master (tkinter.Canvas): master canvas instance on wich tile is
-            about to be managed.
+                about to be managed.
         """
         # initialize tk `eval` and `call` shortcuts they not exist.
         if Tile.tkeval is None or Tile.tkcall is None:
@@ -193,7 +193,7 @@ class Tkmap(tkinter.Canvas):
             relief="solid", padding=(5, 1),
             font=("calibri", "8"), textvariable="coords"
         )
-        self.coords.place_configure(y=-4, rely=1.0, relx=0.5, anchor="s")
+        self._coords_place = dict(y=-4, rely=1.0, relx=0.5, anchor="s")
 
         load_img_package(self.tk)
 
@@ -225,7 +225,8 @@ class Tkmap(tkinter.Canvas):
             cnf (dict): key-value pairs to place the widget.
             **kw: keywords arguments to place the widget.
         """
-        getattr(self, widget).place_configure(cnf, **kw)
+        getattr(self, f"_{widget}_place").update(cnf, **kw)
+        getattr(self, widget).place(**self._coords_place)
 
     def dump_location(self) -> None:
         "Drops cursor location into filesystem"
@@ -285,7 +286,7 @@ class Tkmap(tkinter.Canvas):
         model.init(self)
         self.center()
         self._start()
-        self.coords.place()
+        self.place_widget("coords")
 
     def close(self) -> None:
         "Close the map and clear the canvas."
@@ -373,7 +374,7 @@ class Tkmap(tkinter.Canvas):
         e, n, w, s = self.bbox
         cmd = self.tk.eval
         r = self.radius
-        w = self._w
+        _w = self._w
 
         tags_to_show = set(
             functools.reduce(
@@ -391,18 +392,18 @@ class Tkmap(tkinter.Canvas):
                 self.QUEUED.put(tag)
                 self.JOB.put([tag, self.mapmodel])
 
-        all_tiles = cmd(f"{w} find overlapping {self['scrollregion']}")
+        all_tiles = cmd(f"{_w} find overlapping {self['scrollregion']}")
         tile_to_show = \
-            cmd(f"{w} find overlapping {e - r} {n - r} {w + r} {s + r}")
+            cmd(f"{_w} find overlapping {e - r} {n - r} {w + r} {s + r}")
         tile_to_hide = set(all_tiles.split()) - set(tile_to_show.split())
         standing_by_tiles = tags_to_show & cached_tiles
 
         try:
             cmd(
                 "foreach id {" + " ".join(tile_to_hide) + "} "
-                "{" + w + " itemconfig $id -state hidden};"
+                "{" + _w + " itemconfig $id -state hidden};"
                 "foreach tag {" + " ".join(standing_by_tiles) + "} "
-                "{" + w + " itemconfig $tag -state normal};"
+                "{" + _w + " itemconfig $tag -state normal};"
             )
         except tkinter.TclError as error:
             # due to cache size limitation some images may be deleted
