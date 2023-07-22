@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Widget - The tkinter map canvas</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Widget";
+        var mkdocs_page_input_path = "widget.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <script src="../js/jquery-3.6.0.min.js" defer></script>
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+      <script>hljs.initHighlightingOnLoad();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> The tkinter map canvas
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="" href="../index.md">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">API Documentation</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="" href="../api-documentation/tkinter-map.md">tkinter-map</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">The tkinter map canvas</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a> &raquo;</li>
+      <li>Widget</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/Moustikitos/tkinter-map/edit/master/docs/widget.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p><a id="tkmap.widget"></a></p>
+<h1 id="tkmapwidget">tkmap.widget</h1>
+<p>This module provides the core widget of tkmap package.</p>
+<p><a id="tkmap.widget.Tile"></a></p>
+<h2 id="tile-objects">Tile Objects</h2>
+<pre><code class="language-python">class Tile()
+</code></pre>
+<p><code>Tile</code> class to leverage the tcl interpreter to perform fast image
+operation on canvas.</p>
+<p><strong>Attributes</strong>:</p>
+<ul>
+<li><code>TILE_CMD_CREATE</code> <em>str</em> - (class attribute) tcl command pattern to create
+  the image canvas item.</li>
+<li><code>TILE_CMD_SHOW</code> <em>str</em> - (class attribute) tcl command pattern to show the
+  image canvas item.</li>
+<li><code>TILE_CMD_HIDE</code> <em>str</em> - (class attribute) tcl command pattern to hide the
+  image canvas item.</li>
+<li><code>TILE_CMD_CLEAR</code> <em>str</em> - (class attribute) tcl command pattern to delete
+  the image data.</li>
+<li><code>tkeval</code> <em>callable</em> - (class attribute) the tk <code>eval</code> command.</li>
+<li><code>tkcall</code> <em>callable</em> - (class attribute) the tk <code>call</code> command.</li>
+<li><code>w_name</code> <em>str</em> - master canvas name.</li>
+</ul>
+<p><a id="tkmap.widget.Tile.__init__"></a></p>
+<h4 id="__init__">__init__</h4>
+<pre><code class="language-python">def __init__(master: tkinter.Canvas) -&gt; None
+</code></pre>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>master</code> <em>tkinter.Canvas</em> - master canvas instance on wich tile is
+  about to be managed.</li>
+</ul>
+<p><a id="tkmap.widget.Tile.create"></a></p>
+<h4 id="create">create</h4>
+<pre><code class="language-python">def create(tag: str, data: str) -&gt; None
+</code></pre>
+<p>Create the image data inside tcl interpreter and generate the
+associated canvas image-item.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>tag</code> <em>str</em> - tile tag with format <code>{zoom}_{row}_{col}</code>.</li>
+<li><code>data</code> <em>str</em> - image data as string.</li>
+</ul>
+<p><a id="tkmap.widget.Tile.show"></a></p>
+<h4 id="show">show</h4>
+<pre><code class="language-python">def show() -&gt; None
+</code></pre>
+<p>Reveal the image item on the canvas.</p>
+<p><a id="tkmap.widget.Tile.hide"></a></p>
+<h4 id="hide">hide</h4>
+<pre><code class="language-python">def hide() -&gt; None
+</code></pre>
+<p>Hide the image item from the canvas.</p>
+<p><a id="tkmap.widget.Tile.clear"></a></p>
+<h4 id="clear">clear</h4>
+<pre><code class="language-python">def clear() -&gt; None
+</code></pre>
+<p>Delete the image item from canvas and image data from tcl interpreter.</p>
+<p><a id="tkmap.widget.Tkmap"></a></p>
+<h2 id="tkmap-objects">Tkmap Objects</h2>
+<pre><code class="language-python">class Tkmap(tkinter.Canvas)
+</code></pre>
+<p><code>Tkmap</code> is a <code>tkinter.Canvas</code> object that leverages directly tcl code to
+provide a smooth user experience.</p>
+<p><strong>Attributes</strong>:</p>
+<ul>
+<li><code>coords</code> <em>tkinter.Label</em> - widget to display map coordinates.</li>
+<li><code>framerate</code> <em>int</em> - rate of canvas update.</li>
+<li><code>cachesize</code> <em>int</em> - number of tile stored in Tkmap cache.</li>
+<li><code>cache</code> <em>dict</em> - tile cache.</li>
+<li><code>mapmodel</code> <em>model.MapMode</em> - map model used to generate tile url and
+  compute map coordinates.</li>
+<li><code>workers</code> <em>List[bio.TileWorker]</em> - List of python thread used to perform
+  tile downloads or database queries.</li>
+</ul>
+<p><a id="tkmap.widget.Tkmap.bbox"></a></p>
+<h4 id="bbox">bbox</h4>
+<pre><code class="language-python">@property
+def bbox(obj) -&gt; tuple
+</code></pre>
+<p>Returns east, north, west and south boundaries view on canvas area.</p>
+<p><a id="tkmap.widget.Tkmap.place_widget"></a></p>
+<h4 id="place_widget">place_widget</h4>
+<pre><code class="language-python">def place_widget(widget: str, cnf={}, **kw) -&gt; None
+</code></pre>
+<p>Place inner widgets on the canvas instance.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>widget</code> <em>str</em> - widget attribute name to place.</li>
+<li><code>cnf</code> <em>dict</em> - key-value pairs to place the widget.</li>
+<li><code>**kw</code> - keywords arguments to place the widget.</li>
+</ul>
+<p><a id="tkmap.widget.Tkmap.dump_location"></a></p>
+<h4 id="dump_location">dump_location</h4>
+<pre><code class="language-python">def dump_location() -&gt; None
+</code></pre>
+<p>Drops cursor location into filesystem</p>
+<p><a id="tkmap.widget.Tkmap.save_coords"></a></p>
+<h4 id="save_coords">save_coords</h4>
+<pre><code class="language-python">def save_coords(x: float = None, y: float = None) -&gt; None
+</code></pre>
+<p>Save map coordinates from canvas center or specific coordinates</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>x</code> <em>float</em> - horizontal pixel coordinates.</li>
+<li><code>y</code> <em>float</em> - vertical pixel coordinates.</li>
+</ul>
+<p><a id="tkmap.widget.Tkmap.load_location"></a></p>
+<h4 id="load_location">load_location</h4>
+<pre><code class="language-python">def load_location() -&gt; None
+</code></pre>
+<p>loads last saved location from filesystem</p>
+<p><a id="tkmap.widget.Tkmap.open"></a></p>
+<h4 id="open">open</h4>
+<pre><code class="language-python">def open(model: model.MapModel,
+         zoom: int = None,
+         location: List[float] = None) -&gt; None
+</code></pre>
+<p>Open a map.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>model</code> <em>model.MapModel</em> - map tile provider.</li>
+<li><code>zoom</code> <em>int</em> - zoom level to start at. If not provided, starts to 0
+  or previously saved zoom level.</li>
+<li><code>location</code> <em>List[float]</em> - location to start at. If not provided,
+  starts at longitude 0 and latitude 0 or previously saved
+  location.</li>
+</ul>
+<p><a id="tkmap.widget.Tkmap.close"></a></p>
+<h4 id="close">close</h4>
+<pre><code class="language-python">def close() -&gt; None
+</code></pre>
+<p>Close the map and clear the canvas.</p>
+<p><a id="tkmap.widget.Tkmap.center"></a></p>
+<h4 id="center">center</h4>
+<pre><code class="language-python">def center(px: float = None, py: float = None) -&gt; None
+</code></pre>
+<p>Align canvas center or coordinates to the last saved coordinates.</p>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>px</code> <em>float</em> - horizontal pixel coordinates.</li>
+<li><code>py</code> <em>float</em> - vertical pixel coordinates.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright &copy; 2023 THOORENS Bruno - MIT licence</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/Moustikitos/tkinter-map" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+    
+  </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme_extra.js" defer></script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+    <script defer>
+        window.onload = function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        };
+    </script>
+
+</body>
+</html>
