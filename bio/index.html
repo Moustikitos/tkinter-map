@@ -147,7 +147,7 @@ and starts immediately.</p>
 </ul>
 <p><a id="tkmap.bio.Database.get"></a></p>
 <h4 id="get_1">get</h4>
-<pre><code class="language-python">def get(zoom: int, row: int, col: int) -&gt; str | bool
+<pre><code class="language-python">def get(zoom: int, row: int, col: int) -&gt; Union[str, bool]
 </code></pre>
 <p>Get a tile from database using row, column and zoom parameters.</p>
 <p><strong>Arguments</strong>:</p>
