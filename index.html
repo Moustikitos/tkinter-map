@@ -4,26 +4,26 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
         
         
-        
-        <link rel="shortcut icon" href="../img/favicon.ico">
-        <title>Basic input/output - The tkinter map canvas</title>
-        <link href="../css/bootstrap.min.css" rel="stylesheet">
-        <link href="../css/font-awesome.min.css" rel="stylesheet">
-        <link href="../css/base.css" rel="stylesheet">
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>The tkinter map canvas</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
 
-        <script src="../js/jquery-1.10.2.min.js" defer></script>
-        <script src="../js/bootstrap.min.js" defer></script>
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
-    <body>
+    <body class="homepage">
         <div class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
             <div class="container">
-                <a class="navbar-brand" href="..">The tkinter map canvas</a>
+                <a class="navbar-brand" href=".">The tkinter map canvas</a>
                 <!-- Expander button -->
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
@@ -33,17 +33,17 @@
                 <div id="navbar-collapse" class="navbar-collapse collapse">
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
-                            <li class="navitem">
-                                <a href=".." class="nav-link">Home</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../widget/" class="nav-link">Widgets</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../model/" class="nav-link">Model</a>
-                            </li>
                             <li class="navitem active">
-                                <a href="./" class="nav-link">Basic input/output</a>
+                                <a href="." class="nav-link">Home</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="widget/" class="nav-link">Widgets</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="model/" class="nav-link">Model</a>
+                            </li>
+                            <li class="navitem">
+                                <a href="bio/" class="nav-link">Basic input/output</a>
                             </li>
                         </ul>
 
@@ -54,17 +54,17 @@
                             </a>
                         </li>
                             <li class="nav-item">
-                                <a rel="prev" href="../model/" class="nav-link">
+                                <a rel="prev" class="nav-link disabled">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="widget/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="https://github.com/Moustikitos/tkinter-map/edit/master/docs/bio.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
+                                <a href="https://github.com/Moustikitos/tkinter-map/edit/master/docs/index.md" class="nav-link"><i class="fa fa-github"></i> Edit on GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -84,13 +84,21 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-level="1"><a href="#tkmapbio" class="nav-link">tkmap.bio</a>
+            <li class="nav-item" data-level="1"><a href="#tkmap-widget" class="nav-link">Tkmap widget</a>
               <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#tileworker-objects" class="nav-link">TileWorker Objects</a>
+            <li class="nav-item" data-level="2"><a href="#install" class="nav-link">Install</a>
               <ul class="nav flex-column">
               </ul>
             </li>
-            <li class="nav-item" data-level="2"><a href="#database-objects" class="nav-link">Database Objects</a>
+            <li class="nav-item" data-level="2"><a href="#requirement" class="nav-link">Requirement</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#use" class="nav-link">Use</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-level="2"><a href="#features" class="nav-link">Features</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -101,108 +109,44 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<p><a id="tkmap.bio"></a></p>
-<h1 id="tkmapbio">tkmap.bio</h1>
-<p>Basic input/output module.</p>
-<p><a id="tkmap.bio.TileWorker"></a></p>
-<h2 id="tileworker-objects">TileWorker Objects</h2>
-<pre><code class="language-python">class TileWorker(threading.Thread)
+<h1 id="tkmap-widget">Tkmap widget</h1>
+<p><strong>Efficient web map canvas for tkinter.</strong></p>
+<h2 id="install">Install</h2>
+<h3 id="version-01">Version 0.1</h3>
+<pre><code class="language-bash">python -m pip install tkinter-map
 </code></pre>
-<p>Tile downloader daemon. It gets data from sqlite database or from url
-request if not found. It works with two LIFO queues. <code>TileWorker</code> is a
-subclass of <code>threading.Thread</code>, it is set as a <code>daemon</code> on initialization
-and starts immediately.</p>
-<p><strong>Attributes</strong>:</p>
+<h3 id="developpment-version">Developpment version</h3>
+<pre><code class="language-bash">python -m pip install git+https://github.com/Moustikitos/tkinter-map.git@master
+</code></pre>
+<h2 id="requirement">Requirement</h2>
+<p>If you plan to use <code>Tkmap</code> widget with map providers sending JPEG-based tiles,
+it is recommended to install the <code>tcl</code> package
+<a href="https://sourceforge.net/projects/tkimg/"><code>tkimg</code></a>. Binaries can be extracted
+in <code>.tcl</code> directory at the root of <code>tkmap</code> package (ie the one containing the
+<code>__init__.py</code> module).</p>
+<h2 id="use">Use</h2>
+<pre><code class="language-python">&gt;&gt;&gt; from tkmap import widget, model
+&gt;&gt;&gt; canvas = widget.Tkmap()
+&gt;&gt;&gt; canvas.pack(fill=&quot;both&quot;, expand=True)
+&gt;&gt;&gt; canvas.open(model.OpenStreetMap(), zoom=10, location=(48.645272, 1.841411))
+</code></pre>
+<p><img alt="Tkmap widget" src="./docs/img/widget.png" /></p>
+<h2 id="features">Features</h2>
 <ul>
-<li><code>timeout</code> <em>int</em> - (class attribute) timeout delay when tile data is
-  requested from url.</li>
-<li><code>opener</code> <em>urllib.request.OpenerDirector</em> - (class attribute) url opener
-  used by all <code>TileWorker</code> intances. It is set only with the first
-  class instanciation.</li>
-<li><code>job</code> <em>queue.Queue</em> - queue from where tile tag and map model.</li>
-<li><code>result</code> <em>queue.Queue</em> - queue where tile tag and data are pushed into.</li>
-<li><code>db_name</code> <em>str</em> - database base name.</li>
-<li><code>stop</code> <em>threading.Event</em> - event used to stop forever loop.</li>
+<li>[x] Tile set:</li>
+<li>[x] Google map</li>
+<li>[x] Google satellite</li>
+<li>[x] Open Street map</li>
+<li>[x] Mapbox satellite</li>
+<li>[x] Custom map</li>
+<li>[x] Zoom, pan and fast pan mouse action</li>
+<li>[x] Latitude longitude pixel location</li>
+<li>[x] Tile caching</li>
 </ul>
-<p><a id="tkmap.bio.TileWorker.__init__"></a></p>
-<h4 id="__init__">__init__</h4>
-<pre><code class="language-python">def __init__(job: queue.Queue, result: queue.Queue, db_name: str) -&gt; None
-</code></pre>
-<p><strong>Arguments</strong>:</p>
+<h3 id="ongoing-work">Ongoing work</h3>
 <ul>
-<li><code>job</code> <em>queue.Queue</em> - queue from where tile tag and map model.</li>
-<li><code>result</code> <em>queue.Queue</em> - queue where tile tag and data are pushed
-  into.</li>
-<li><code>db_name</code> <em>str</em> - database base name.</li>
-</ul>
-<p><a id="tkmap.bio.TileWorker.kill"></a></p>
-<h4 id="kill">kill</h4>
-<pre><code class="language-python">def kill() -&gt; None
-</code></pre>
-<p>Stop the forever loop</p>
-<p><a id="tkmap.bio.TileWorker.run"></a></p>
-<h4 id="run">run</h4>
-<pre><code class="language-python">def run() -&gt; None
-</code></pre>
-<p>Forever loop</p>
-<p><a id="tkmap.bio.TileWorker.get"></a></p>
-<h4 id="get">get</h4>
-<pre><code class="language-python">def get(url: str, headers: dict = {}) -&gt; str
-</code></pre>
-<p>Download tile from server.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>url</code> <em>str</em> - tile ressource location.</li>
-<li><code>headers</code> <em>dict</em> - headers used in request.</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<ul>
-<li><code>str</code> - base64-encoded data.</li>
-</ul>
-<p><a id="tkmap.bio.Database"></a></p>
-<h2 id="database-objects">Database Objects</h2>
-<pre><code class="language-python">class Database()
-</code></pre>
-<p><code>sqlite3</code> database implementation used for tile caching.</p>
-<p><a id="tkmap.bio.Database.__init__"></a></p>
-<h4 id="__init___1">__init__</h4>
-<pre><code class="language-python">def __init__(name: str) -&gt; None
-</code></pre>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>name</code> <em>str</em> - database name. Database is created in the tkmap.MAPS
-  folder with &ldquo;.sqlm&rdquo; extention.</li>
-</ul>
-<p><a id="tkmap.bio.Database.get"></a></p>
-<h4 id="get_1">get</h4>
-<pre><code class="language-python">def get(zoom: int, row: int, col: int) -&gt; Union[str, bool]
-</code></pre>
-<p>Get a tile from database using row, column and zoom parameters.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>zoom</code> <em>int</em> - tile set zoom level.</li>
-<li><code>row</code> <em>int</em> - tile set row.</li>
-<li><code>col</code> <em>int</em> - tile set column.</li>
-</ul>
-<p><strong>Returns</strong>:</p>
-<p>str | bool: base64-encoded data if any tile found else <code>False</code></p>
-<p><a id="tkmap.bio.Database.put"></a></p>
-<h4 id="put">put</h4>
-<pre><code class="language-python">def put(zoom: int, row: int, col: int, data: str) -&gt; None
-</code></pre>
-<p>Set tile data in database with row, column and zoom informations.</p>
-<p><strong>Arguments</strong>:</p>
-<ul>
-<li><code>zoom</code> <em>int</em> - tile set zoom level.</li>
-<li><code>row</code> <em>int</em> - tile set row.</li>
-<li><code>col</code> <em>int</em> - tile set column.</li>
-<li><code>data</code> <em>str</em> - base64-encoded string.</li>
-</ul>
-<p><a id="tkmap.bio.Database.close"></a></p>
-<h4 id="close">close</h4>
-<pre><code class="language-python">def close() -&gt; None
-</code></pre>
-<p>Save and close database.</p></div>
+<li>[ ] Location format and projection</li>
+</ul></div>
             </div>
         </div>
 
@@ -212,11 +156,11 @@ and starts immediately.</p>
             <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
         <script>
-            var base_url = "..",
+            var base_url = ".",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="../js/base.js" defer></script>
-        <script src="../search/main.js" defer></script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -281,3 +225,8 @@ and starts immediately.</p>
 
     </body>
 </html>
+
+<!--
+MkDocs version : 1.4.3
+Build Date UTC : 2023-07-23 09:59:05.214750+00:00
+-->
