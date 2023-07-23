@@ -96,12 +96,33 @@ class Tile:
         Tile.tkeval(self._clear)
 
 
+def _xscroll(a, b, widget):
+    a, b = float(a), float(b)
+    if a > 0. or b < 1.0:
+        tkinter._default_root.eval(
+            f"place configure {widget} -height 2 -rely 1.0 "
+            f"-relx {a} -relwidth {max(0.01, b - a)} -anchor sw"
+        )
+    else:
+        tkinter._default_root.eval(f"place forget {widget}")
+
+
+def _yscroll(a, b, widget):
+    a, b = float(a), float(b)
+    if a > 0. or b < 1.0:
+        tkinter._default_root.eval(
+            f"place configure {widget} -width 2 -relx 1.0 "
+            f"-rely {a} -relheight {max(0.01, b - a)} -anchor ne"
+        )
+    else:
+        tkinter._default_root.eval(f"place forget {widget}")
+
+
 # inertia computation @ 100Hz & k = 0.9
 def _drift(obj: tkinter.Canvas, speed_x: float, speed_y: float) -> None:
     t = time.time()
     dt = t - obj._tps[1]
-    dx = speed_x * dt
-    dy = speed_y * dt
+    dx, dy = speed_x * dt, speed_y * dt
     obj._tps[1] = t
     if obj._tps[0] is None and (dx*dx + dy*dy) > 1:
         obj.tk.eval(
@@ -173,7 +194,7 @@ class Tkmap(tkinter.Canvas):
 
     @property
     def bbox(obj) -> tuple:
-        "Returns east, north, west and south boundaries view on canvas area."
+        "Returns west, north, east and south boundaries view on canvas area."
         return [
             int(float(e)) for e in obj.tk.eval(
                 f"list [{obj._w} canvasx 0] [{obj._w} canvasy 0]"
@@ -187,10 +208,18 @@ class Tkmap(tkinter.Canvas):
         self.cachesize = kw.pop("cachesize", 500)
 
         tkinter.Canvas.__init__(self, master, cnf, **kw)
+        # scrollincrement needs to be set to pixel size for correct drift
+        # effect
         self["xscrollincrement"] = self["yscrollincrement"] = 1
+        self["xscrollcommand"] = \
+            lambda a, b, f=tkinter.Frame(self, bg="systemHighlight")._w: \
+            _xscroll(a, b, f)
+        self["yscrollcommand"] = \
+            lambda a, b, f=tkinter.Frame(self, bg="systemHighlight")._w: \
+            _yscroll(a, b, f)
 
         self.coords = ttk.Label(
-            relief="solid", padding=(5, 1),
+            self, relief="solid", padding=(5, 1),
             font=("calibri", "8"), textvariable="coords"
         )
         self._coords_place = dict(y=-4, rely=1.0, relx=0.5, anchor="s")
@@ -363,15 +392,15 @@ class Tkmap(tkinter.Canvas):
         tw, th = self.mapmodel.tilesize
         nr, nc = self.mapsize
         bd = self.borderwidth
-        e, n, w, s = self.bbox
+        w, n, e, s = self.bbox
         self.drawarea = (
-            max(0, e//tw-bd), max(0, n//th-bd),
-            min(nr, w//tw+bd), min(nc, s//th+bd)
+            max(0, w//tw-bd), max(0, n//th-bd),
+            min(nr, e//tw+bd), min(nc, s//th+bd)
         )
 
     def _update(self) -> None:
         c1, r1, c2, r2 = self.drawarea
-        e, n, w, s = self.bbox
+        w, n, e, s = self.bbox
         cmd = self.tk.eval
         r = self.radius
         _w = self._w
@@ -394,7 +423,7 @@ class Tkmap(tkinter.Canvas):
 
         all_tiles = cmd(f"{_w} find overlapping {self['scrollregion']}")
         tile_to_show = \
-            cmd(f"{_w} find overlapping {e - r} {n - r} {w + r} {s + r}")
+            cmd(f"{_w} find overlapping {w - r} {n - r} {e + r} {s + r}")
         tile_to_hide = set(all_tiles.split()) - set(tile_to_show.split())
         standing_by_tiles = tags_to_show & cached_tiles
 
