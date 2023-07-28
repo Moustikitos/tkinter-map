@@ -1,0 +1,42 @@
+loaders:
+  - type: python
+processors:
+  - type: filter
+  - type: smart
+  - type: crossref
+hooks:
+  pre-render:
+  - python -c "import os;os.makedirs('./docs', exist_ok=True)"
+  - pydoc-markdown -m tkmap.widget > ./docs/widget.md
+  - pydoc-markdown -m tkmap.model  > ./docs/model.md
+  - pydoc-markdown -m tkmap.bio    > ./docs/bio.md
+renderer:
+  output_directory: .
+  content_directory_name: docs
+  type: mkdocs
+  pages:
+    - title: Home
+      name: index
+      source: README.md
+    - title: Widgets
+      name: widget
+      contents: [ tkmap.widget* ]
+    - title: Model
+      name: model
+      contents: [ tkmap.model* ]
+    - title: Basic input/output
+      name: bio
+      contents: [ tkmap.bio* ]
+  mkdocs_config:
+    copyright: Copyright &copy; 2023 THOORENS Bruno - MIT licence
+    site_name: The tkinter map canvas
+    theme:
+      name: readthedocs
+      nav_style: light
+    repo_url: https://github.com/Moustikitos/tkinter-map
+    repo_name: GitHub
+    markdown_extensions:
+      - smarty
+    plugins:
+      - search
+      # - mermaid2

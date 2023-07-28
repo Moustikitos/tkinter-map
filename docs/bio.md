@@ -126,7 +126,7 @@ Get a tile from database using row, column and zoom parameters.
 
 **Returns**:
 
-  str | bool: base64-encoded data if any tile found else `False`
+- `str|bool` - base64-encoded data if any tile found else `False`
 
 <a id="tkmap.bio.Database.put"></a>
 

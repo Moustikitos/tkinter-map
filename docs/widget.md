@@ -119,7 +119,7 @@ provide a smooth user experience.
 def bbox(obj) -> tuple
 ```
 
-Returns east, north, west and south boundaries view on canvas area.
+Returns west, north, east and south boundaries view on canvas area.
 
 <a id="tkmap.widget.Tkmap.place_widget"></a>
 
