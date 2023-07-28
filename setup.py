@@ -26,7 +26,7 @@ kw = {
     "long_description_content_type": "text/markdown",
     "packages": ["tkmap"],
     "install_requires": [],
-    "license": "Cpyright 2023 THOORENS Bruno",
+    "license": "Copyright 2023, THOORENS Bruno, MIT licence",
     "classifiers": [
         "Development Status :: 3 - Alpha",
         "Environment :: Console",

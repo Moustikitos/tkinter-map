@@ -2,6 +2,13 @@
 
 **Efficient web map canvas for tkinter.**
 
+[![pypi](https://img.shields.io/pypi/l/tkinter-map.svg)](https://github.com/Moustikitos/tkinter-map/blob/master/LICENSE)
+
+## Support this project
+
+[![Liberapay receiving](https://img.shields.io/liberapay/goal/Toons?logo=liberapay)](https://liberapay.com/Toons/donate)
+[![Paypal me](https://img.shields.io/badge/PayPal-00457C?logo=paypal&logoColor=white)](https://paypal.me/toons)
+
 ## Install
 
 ### Version 0.1
@@ -33,7 +40,7 @@ in `.tcl` directory at the root of `tkmap` package (ie the one containing the
 >>> canvas.open(model.OpenStreetMap(), zoom=10, location=(48.645272, 1.841411))
 ```
 
-![Tkmap widget](./docs/img/widget.png)
+![Tkmap widget](./img/widget.png)
 
 ## Features
 
