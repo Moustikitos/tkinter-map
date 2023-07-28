@@ -159,7 +159,7 @@ class Database:
             col (int): tile set column.
 
         Returns:
-            str | bool: base64-encoded data if any tile found else `False`
+            str|bool: base64-encoded data if any tile found else `False`
         """
 
         req = self.sqlite.execute(
