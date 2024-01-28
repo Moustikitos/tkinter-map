@@ -16,6 +16,13 @@ from urllib.request import HTTPSHandler
 from tkmap import MAPS
 from typing import Union
 
+try:
+    import sqlitemap
+    sqlitemap.SqliteMapFile.folder = MAPS
+    SQLITEMAP = True
+except Exception:
+    SQLITEMAP = False
+
 
 class TileWorker(threading.Thread):
     """
@@ -40,7 +47,7 @@ class TileWorker(threading.Thread):
     opener = None
 
     def __init__(
-        self, job: queue.Queue, result: queue.Queue, db_name: str
+        self, job: queue.Queue, result: queue.Queue, db_name: str, **options
     ) -> None:
         """
         Args:
@@ -64,6 +71,7 @@ class TileWorker(threading.Thread):
             TileWorker.opener.add_handler(HTTPHandler())
             TileWorker.opener.add_handler(HTTPSHandler(context=ctx))
 
+        self.exc_info = options.get("exc_info", False)
         self.start()
 
     def kill(self) -> None:
@@ -72,7 +80,9 @@ class TileWorker(threading.Thread):
 
     def run(self) -> None:
         "Forever loop"
-        db = Database(self.db_name)
+        db = (Database if not SQLITEMAP else sqlitemap.SqliteMapFile)(
+            self.db_name
+        )
         while True:
             try:
                 # tag is a formated string "{zoom}_{row}_{col}"
@@ -96,7 +106,7 @@ class TileWorker(threading.Thread):
                 self.result.put([tag, False])
                 logging.error(
                     f" -> {__class__.__name__}: {error}",
-                    # exc_info=True
+                    exc_info=self.exc_info
                 )
         db.close()
         logging.info(f" -> {__class__.__name__}: {self} exiting")
@@ -166,10 +176,7 @@ class Database:
             "SELECT data FROM tiles WHERE zoom=? AND row=? AND col=?;",
             (zoom, row, col)
         ).fetchall()
-        if len(req):
-            return req[0]['data']
-        else:
-            return False
+        return req[0]['data'] if req else False
 
     def put(self, zoom: int, row: int, col: int, data: str) -> None:
         """
