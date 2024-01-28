@@ -37,7 +37,7 @@ in `.tcl` directory at the root of `tkmap` package (ie the one containing the
 >>> from tkmap import widget, model
 >>> canvas = widget.Tkmap()
 >>> canvas.pack(fill="both", expand=True)
->>> canvas.open(model.OpenStreetMap(), zoom=10, location=(48.645272, 1.841411))
+>>> canvas.open(model.MapModel.load("openstreetmap"), zoom=10, location=(48.645272, 1.841411))
 ```
 
 ![Tkmap widget](https://raw.githubusercontent.com/Moustikitos/tkinter-map/master/img/widget.png)
@@ -45,10 +45,10 @@ in `.tcl` directory at the root of `tkmap` package (ie the one containing the
 ## Features
 
 - [x] Tile set:
-  - [x] Google map
-  - [x] Google satellite
-  - [x] Open Street map
-  - [x] Mapbox satellite
+    * [x] Google map
+    * [x] Google satellite
+    * [x] Open Street map
+    * [x] Mapbox satellite
 - [x] Custom map
 - [x] Zoom, pan and fast pan mouse action
 - [x] Latitude longitude pixel location

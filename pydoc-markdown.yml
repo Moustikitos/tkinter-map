@@ -10,6 +10,7 @@ hooks:
   - pydoc-markdown -m tkmap.widget > ./docs/widget.md
   - pydoc-markdown -m tkmap.model  > ./docs/model.md
   - pydoc-markdown -m tkmap.bio    > ./docs/bio.md
+  - copy README.md docs\index.md
 renderer:
   output_directory: .
   content_directory_name: docs
@@ -37,6 +38,9 @@ renderer:
     repo_name: GitHub
     markdown_extensions:
       - smarty
+      # - def_list
+      # - pymdownx.tasklist:
+      #     custom_checkbox: true
     plugins:
       - search
       # - mermaid2
