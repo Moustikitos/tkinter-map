@@ -34,7 +34,8 @@ and starts immediately.
 #### \_\_init\_\_
 
 ```python
-def __init__(job: queue.Queue, result: queue.Queue, db_name: str) -> None
+def __init__(job: queue.Queue, result: queue.Queue, db_name: str,
+             **options) -> None
 ```
 
 **Arguments**:
