@@ -1,10 +1,6 @@
 # -*- coding:utf-8 -*-
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-
+from setuptools import setup
 
 with open("VERSION") as f1, open("README.md") as f2:
     VERSION = f1.read().strip()
