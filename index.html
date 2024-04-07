@@ -124,24 +124,26 @@ in <code>.tcl</code> directory at the root of <code>tkmap</code> package (ie the
 <pre><code class="language-python">&gt;&gt;&gt; from tkmap import widget, model
 &gt;&gt;&gt; canvas = widget.Tkmap()
 &gt;&gt;&gt; canvas.pack(fill=&quot;both&quot;, expand=True)
-&gt;&gt;&gt; canvas.open(model.OpenStreetMap(), zoom=10, location=(48.645272, 1.841411))
+&gt;&gt;&gt; canvas.open(model.MapModel.load(&quot;openstreetmap&quot;), zoom=10, location=(48.645272, 1.841411))
 </code></pre>
 <p><img alt="Tkmap widget" src="https://raw.githubusercontent.com/Moustikitos/tkinter-map/master/img/widget.png" /></p>
 <h2 id="features">Features</h2>
-<ul>
-<li>[x] Tile set:</li>
-<li>[x] Google map</li>
-<li>[x] Google satellite</li>
-<li>[x] Open Street map</li>
-<li>[x] Mapbox satellite</li>
-<li>[x] Custom map</li>
-<li>[x] Zoom, pan and fast pan mouse action</li>
-<li>[x] Latitude longitude pixel location</li>
-<li>[x] Tile caching</li>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked/> Tile set:<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked/> Google map</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> Google satellite</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> Open Street map</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> Mapbox satellite</li>
+</ul>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> Custom map</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> Zoom, pan and fast pan mouse action</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> Latitude longitude pixel location</li>
+<li class="task-list-item"><input type="checkbox" disabled checked/> Tile caching</li>
 </ul>
 <h3 id="ongoing-work">Ongoing work</h3>
-<ul>
-<li>[ ] Location format and projection</li>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Location format and projection</li>
 </ul>
               
             </div>
@@ -196,5 +198,5 @@ in <code>.tcl</code> directory at the root of <code>tkmap</code> package (ie the
 
 <!--
 MkDocs version : 1.5.3
-Build Date UTC : 2024-01-21 19:21:31.173012+00:00
+Build Date UTC : 2024-04-07 18:19:43.683930+00:00
 -->

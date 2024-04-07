@@ -56,25 +56,25 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#tileworker-objects">TileWorker Objects</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#__init__">__init__</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tileworker__init__">TileWorker.__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#kill">kill</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tileworkerkill">TileWorker.kill</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#run">run</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tileworkerrun">TileWorker.run</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get">get</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tileworkerget">TileWorker.get</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#database-objects">Database Objects</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#__init___1">__init__</a>
+    <li class="toctree-l3"><a class="reference internal" href="#database__init__">Database.__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get_1">get</a>
+    <li class="toctree-l3"><a class="reference internal" href="#databaseget">Database.get</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#put">put</a>
+    <li class="toctree-l3"><a class="reference internal" href="#databaseput">Database.put</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#close">close</a>
+    <li class="toctree-l3"><a class="reference internal" href="#databaseclose">Database.close</a>
     </li>
         </ul>
     </li>
@@ -106,7 +106,7 @@
             <div class="section" itemprop="articleBody">
               
                 <p><a id="tkmap.bio"></a></p>
-<h1 id="tkmapbio">tkmap.bio</h1>
+<h1 id="module-tkmapbio">Module tkmap.bio</h1>
 <p>Basic input/output module.</p>
 <p><a id="tkmap.bio.TileWorker"></a></p>
 <h2 id="tileworker-objects">TileWorker Objects</h2>
@@ -129,8 +129,9 @@ and starts immediately.</p>
 <li><code>stop</code> <em>threading.Event</em> - event used to stop forever loop.</li>
 </ul>
 <p><a id="tkmap.bio.TileWorker.__init__"></a></p>
-<h4 id="__init__">__init__</h4>
-<pre><code class="language-python">def __init__(job: queue.Queue, result: queue.Queue, db_name: str) -&gt; None
+<h3 id="tileworker__init__">TileWorker.__init__</h3>
+<pre><code class="language-python">def __init__(job: queue.Queue, result: queue.Queue, db_name: str,
+             **options) -&gt; None
 </code></pre>
 <p><strong>Arguments</strong>:</p>
 <ul>
@@ -140,17 +141,17 @@ and starts immediately.</p>
 <li><code>db_name</code> <em>str</em> - database base name.</li>
 </ul>
 <p><a id="tkmap.bio.TileWorker.kill"></a></p>
-<h4 id="kill">kill</h4>
+<h3 id="tileworkerkill">TileWorker.kill</h3>
 <pre><code class="language-python">def kill() -&gt; None
 </code></pre>
 <p>Stop the forever loop</p>
 <p><a id="tkmap.bio.TileWorker.run"></a></p>
-<h4 id="run">run</h4>
+<h3 id="tileworkerrun">TileWorker.run</h3>
 <pre><code class="language-python">def run() -&gt; None
 </code></pre>
 <p>Forever loop</p>
 <p><a id="tkmap.bio.TileWorker.get"></a></p>
-<h4 id="get">get</h4>
+<h3 id="tileworkerget">TileWorker.get</h3>
 <pre><code class="language-python">def get(url: str, headers: dict = {}) -&gt; str
 </code></pre>
 <p>Download tile from server.</p>
@@ -169,7 +170,7 @@ and starts immediately.</p>
 </code></pre>
 <p><code>sqlite3</code> database implementation used for tile caching.</p>
 <p><a id="tkmap.bio.Database.__init__"></a></p>
-<h4 id="__init___1">__init__</h4>
+<h3 id="database__init__">Database.__init__</h3>
 <pre><code class="language-python">def __init__(name: str) -&gt; None
 </code></pre>
 <p><strong>Arguments</strong>:</p>
@@ -178,7 +179,7 @@ and starts immediately.</p>
   folder with &ldquo;.sqlm&rdquo; extention.</li>
 </ul>
 <p><a id="tkmap.bio.Database.get"></a></p>
-<h4 id="get_1">get</h4>
+<h3 id="databaseget">Database.get</h3>
 <pre><code class="language-python">def get(zoom: int, row: int, col: int) -&gt; Union[str, bool]
 </code></pre>
 <p>Get a tile from database using row, column and zoom parameters.</p>
@@ -193,7 +194,7 @@ and starts immediately.</p>
 <li><code>str|bool</code> - base64-encoded data if any tile found else <code>False</code></li>
 </ul>
 <p><a id="tkmap.bio.Database.put"></a></p>
-<h4 id="put">put</h4>
+<h3 id="databaseput">Database.put</h3>
 <pre><code class="language-python">def put(zoom: int, row: int, col: int, data: str) -&gt; None
 </code></pre>
 <p>Set tile data in database with row, column and zoom informations.</p>
@@ -205,7 +206,7 @@ and starts immediately.</p>
 <li><code>data</code> <em>str</em> - base64-encoded string.</li>
 </ul>
 <p><a id="tkmap.bio.Database.close"></a></p>
-<h4 id="close">close</h4>
+<h3 id="databaseclose">Database.close</h3>
 <pre><code class="language-python">def close() -&gt; None
 </code></pre>
 <p>Save and close database.</p>

@@ -48,35 +48,35 @@
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#tile-objects">Tile Objects</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#__init__">__init__</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tile__init__">Tile.__init__</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#create">create</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tilecreate">Tile.create</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#show">show</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tileshow">Tile.show</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#hide">hide</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tilehide">Tile.hide</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#clear">clear</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tileclear">Tile.clear</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#tkmap-objects">Tkmap Objects</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#bbox">bbox</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tkmapbbox">Tkmap.bbox</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#place_widget">place_widget</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tkmapplace_widget">Tkmap.place_widget</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#dump_location">dump_location</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tkmapdump_location">Tkmap.dump_location</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#save_coords">save_coords</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tkmapsave_coords">Tkmap.save_coords</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#load_location">load_location</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tkmapload_location">Tkmap.load_location</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#open">open</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tkmapopen">Tkmap.open</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#close">close</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tkmapclose">Tkmap.close</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#center">center</a>
+    <li class="toctree-l3"><a class="reference internal" href="#tkmapcenter">Tkmap.center</a>
     </li>
         </ul>
     </li>
@@ -116,7 +116,7 @@
             <div class="section" itemprop="articleBody">
               
                 <p><a id="tkmap.widget"></a></p>
-<h1 id="tkmapwidget">tkmap.widget</h1>
+<h1 id="module-tkmapwidget">Module tkmap.widget</h1>
 <p>This module provides the core widget of tkmap package.</p>
 <p><a id="tkmap.widget.Tile"></a></p>
 <h2 id="tile-objects">Tile Objects</h2>
@@ -139,7 +139,7 @@ operation on canvas.</p>
 <li><code>w_name</code> <em>str</em> - master canvas name.</li>
 </ul>
 <p><a id="tkmap.widget.Tile.__init__"></a></p>
-<h4 id="__init__">__init__</h4>
+<h3 id="tile__init__">Tile.__init__</h3>
 <pre><code class="language-python">def __init__(master: tkinter.Canvas) -&gt; None
 </code></pre>
 <p><strong>Arguments</strong>:</p>
@@ -148,7 +148,7 @@ operation on canvas.</p>
   about to be managed.</li>
 </ul>
 <p><a id="tkmap.widget.Tile.create"></a></p>
-<h4 id="create">create</h4>
+<h3 id="tilecreate">Tile.create</h3>
 <pre><code class="language-python">def create(tag: str, data: str) -&gt; None
 </code></pre>
 <p>Create the image data inside tcl interpreter and generate the
@@ -159,17 +159,17 @@ associated canvas image-item.</p>
 <li><code>data</code> <em>str</em> - image data as string.</li>
 </ul>
 <p><a id="tkmap.widget.Tile.show"></a></p>
-<h4 id="show">show</h4>
+<h3 id="tileshow">Tile.show</h3>
 <pre><code class="language-python">def show() -&gt; None
 </code></pre>
 <p>Reveal the image item on the canvas.</p>
 <p><a id="tkmap.widget.Tile.hide"></a></p>
-<h4 id="hide">hide</h4>
+<h3 id="tilehide">Tile.hide</h3>
 <pre><code class="language-python">def hide() -&gt; None
 </code></pre>
 <p>Hide the image item from the canvas.</p>
 <p><a id="tkmap.widget.Tile.clear"></a></p>
-<h4 id="clear">clear</h4>
+<h3 id="tileclear">Tile.clear</h3>
 <pre><code class="language-python">def clear() -&gt; None
 </code></pre>
 <p>Delete the image item from canvas and image data from tcl interpreter.</p>
@@ -191,13 +191,13 @@ provide a smooth user experience.</p>
   tile downloads or database queries.</li>
 </ul>
 <p><a id="tkmap.widget.Tkmap.bbox"></a></p>
-<h4 id="bbox">bbox</h4>
+<h3 id="tkmapbbox">Tkmap.bbox</h3>
 <pre><code class="language-python">@property
 def bbox(obj) -&gt; tuple
 </code></pre>
 <p>Returns west, north, east and south boundaries view on canvas area.</p>
 <p><a id="tkmap.widget.Tkmap.place_widget"></a></p>
-<h4 id="place_widget">place_widget</h4>
+<h3 id="tkmapplace_widget">Tkmap.place_widget</h3>
 <pre><code class="language-python">def place_widget(widget: str, cnf={}, **kw) -&gt; None
 </code></pre>
 <p>Place inner widgets on the canvas instance.</p>
@@ -208,12 +208,12 @@ def bbox(obj) -&gt; tuple
 <li><code>**kw</code> - keywords arguments to place the widget.</li>
 </ul>
 <p><a id="tkmap.widget.Tkmap.dump_location"></a></p>
-<h4 id="dump_location">dump_location</h4>
+<h3 id="tkmapdump_location">Tkmap.dump_location</h3>
 <pre><code class="language-python">def dump_location() -&gt; None
 </code></pre>
 <p>Drops cursor location into filesystem</p>
 <p><a id="tkmap.widget.Tkmap.save_coords"></a></p>
-<h4 id="save_coords">save_coords</h4>
+<h3 id="tkmapsave_coords">Tkmap.save_coords</h3>
 <pre><code class="language-python">def save_coords(x: float = None, y: float = None) -&gt; None
 </code></pre>
 <p>Save map coordinates from canvas center or specific coordinates</p>
@@ -223,12 +223,12 @@ def bbox(obj) -&gt; tuple
 <li><code>y</code> <em>float</em> - vertical pixel coordinates.</li>
 </ul>
 <p><a id="tkmap.widget.Tkmap.load_location"></a></p>
-<h4 id="load_location">load_location</h4>
+<h3 id="tkmapload_location">Tkmap.load_location</h3>
 <pre><code class="language-python">def load_location() -&gt; None
 </code></pre>
 <p>loads last saved location from filesystem</p>
 <p><a id="tkmap.widget.Tkmap.open"></a></p>
-<h4 id="open">open</h4>
+<h3 id="tkmapopen">Tkmap.open</h3>
 <pre><code class="language-python">def open(model: model.MapModel,
          zoom: int = None,
          location: List[float] = None) -&gt; None
@@ -244,12 +244,12 @@ def bbox(obj) -&gt; tuple
   location.</li>
 </ul>
 <p><a id="tkmap.widget.Tkmap.close"></a></p>
-<h4 id="close">close</h4>
+<h3 id="tkmapclose">Tkmap.close</h3>
 <pre><code class="language-python">def close() -&gt; None
 </code></pre>
 <p>Close the map and clear the canvas.</p>
 <p><a id="tkmap.widget.Tkmap.center"></a></p>
-<h4 id="center">center</h4>
+<h3 id="tkmapcenter">Tkmap.center</h3>
 <pre><code class="language-python">def center(px: float = None, py: float = None) -&gt; None
 </code></pre>
 <p>Align canvas center or coordinates to the last saved coordinates.</p>
