@@ -1,6 +1,6 @@
 <a id="tkmap.model"></a>
 
-# tkmap.model
+# Module tkmap.model
 
 <a id="tkmap.model.MapModel"></a>
 
@@ -12,7 +12,7 @@ class MapModel()
 
 <a id="tkmap.model.MapModel.get_tile_url"></a>
 
-#### get\_tile\_url
+### MapModel.get\_tile\_url
 
 ```python
 def get_tile_url(row: int, col: int, zoom: int) -> str

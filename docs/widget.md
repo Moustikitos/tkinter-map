@@ -1,6 +1,6 @@
 <a id="tkmap.widget"></a>
 
-# tkmap.widget
+# Module tkmap.widget
 
 This module provides the core widget of tkmap package.
 
@@ -31,7 +31,7 @@ operation on canvas.
 
 <a id="tkmap.widget.Tile.__init__"></a>
 
-#### \_\_init\_\_
+### Tile.\_\_init\_\_
 
 ```python
 def __init__(master: tkinter.Canvas) -> None
@@ -44,7 +44,7 @@ def __init__(master: tkinter.Canvas) -> None
 
 <a id="tkmap.widget.Tile.create"></a>
 
-#### create
+### Tile.create
 
 ```python
 def create(tag: str, data: str) -> None
@@ -60,7 +60,7 @@ associated canvas image-item.
 
 <a id="tkmap.widget.Tile.show"></a>
 
-#### show
+### Tile.show
 
 ```python
 def show() -> None
@@ -70,7 +70,7 @@ Reveal the image item on the canvas.
 
 <a id="tkmap.widget.Tile.hide"></a>
 
-#### hide
+### Tile.hide
 
 ```python
 def hide() -> None
@@ -80,7 +80,7 @@ Hide the image item from the canvas.
 
 <a id="tkmap.widget.Tile.clear"></a>
 
-#### clear
+### Tile.clear
 
 ```python
 def clear() -> None
@@ -112,7 +112,7 @@ provide a smooth user experience.
 
 <a id="tkmap.widget.Tkmap.bbox"></a>
 
-#### bbox
+### Tkmap.bbox
 
 ```python
 @property
@@ -123,7 +123,7 @@ Returns west, north, east and south boundaries view on canvas area.
 
 <a id="tkmap.widget.Tkmap.place_widget"></a>
 
-#### place\_widget
+### Tkmap.place\_widget
 
 ```python
 def place_widget(widget: str, cnf={}, **kw) -> None
@@ -139,7 +139,7 @@ Place inner widgets on the canvas instance.
 
 <a id="tkmap.widget.Tkmap.dump_location"></a>
 
-#### dump\_location
+### Tkmap.dump\_location
 
 ```python
 def dump_location() -> None
@@ -149,7 +149,7 @@ Drops cursor location into filesystem
 
 <a id="tkmap.widget.Tkmap.save_coords"></a>
 
-#### save\_coords
+### Tkmap.save\_coords
 
 ```python
 def save_coords(x: float = None, y: float = None) -> None
@@ -164,7 +164,7 @@ Save map coordinates from canvas center or specific coordinates
 
 <a id="tkmap.widget.Tkmap.load_location"></a>
 
-#### load\_location
+### Tkmap.load\_location
 
 ```python
 def load_location() -> None
@@ -174,7 +174,7 @@ loads last saved location from filesystem
 
 <a id="tkmap.widget.Tkmap.open"></a>
 
-#### open
+### Tkmap.open
 
 ```python
 def open(model: model.MapModel,
@@ -195,7 +195,7 @@ Open a map.
 
 <a id="tkmap.widget.Tkmap.close"></a>
 
-#### close
+### Tkmap.close
 
 ```python
 def close() -> None
@@ -205,7 +205,7 @@ Close the map and clear the canvas.
 
 <a id="tkmap.widget.Tkmap.center"></a>
 
-#### center
+### Tkmap.center
 
 ```python
 def center(px: float = None, py: float = None) -> None

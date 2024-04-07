@@ -28,6 +28,18 @@ renderer:
     - title: Basic input/output
       name: bio
       contents: [ tkmap.bio* ]
+  markdown:
+    use_fixed_header_levels: true
+    header_level_by_type:
+      Module: 1
+      Class: 2
+      Method: 3
+      Function: 2
+      Data: 4
+    add_module_prefix: true
+    add_method_class_prefix: true
+    add_member_class_prefix: true
+    descriptive_module_title: true
   mkdocs_config:
     copyright: Copyright &copy; 2023 THOORENS Bruno - MIT licence
     site_name: The tkinter map canvas
@@ -38,9 +50,9 @@ renderer:
     repo_name: GitHub
     markdown_extensions:
       - smarty
-      # - def_list
-      # - pymdownx.tasklist:
-      #     custom_checkbox: true
+      - def_list
+      - pymdownx.tasklist:
+          custom_checkbox: false
     plugins:
       - search
       # - mermaid2

@@ -2,6 +2,9 @@ copyright: Copyright &copy; 2023 THOORENS Bruno - MIT licence
 docs_dir: docs
 markdown_extensions:
 - smarty
+- def_list
+- pymdownx.tasklist:
+    custom_checkbox: false
 nav:
 - Home: index.md
 - Widgets: widget.md

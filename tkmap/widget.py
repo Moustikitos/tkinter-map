@@ -164,7 +164,7 @@ def _drawloop(obj: tkinter.Canvas, ms: int) -> None:
         except Exception as error:
             logging.error(
                 f" -> _drawloop error: {error} - tag {tag}",
-                # exc_info=True
+                exc_info=getattr(obj, "exc_info", False)
             )
     # clean _after_tasks list
     for callback in obj._after_tasks[:]:
@@ -206,6 +206,7 @@ class Tkmap(tkinter.Canvas):
     def __init__(self, master=None, cnf={}, **kw) -> None:
         self.framerate = kw.pop("framerate", 4)
         self.cachesize = kw.pop("cachesize", 500)
+        self.exc_info = kw.pop("exc_info", False)
 
         tkinter.Canvas.__init__(self, master, cnf, **kw)
         # scrollincrement needs to be set to pixel size for correct drift
@@ -439,7 +440,7 @@ class Tkmap(tkinter.Canvas):
             # during the tcl command execution
             logging.info(
                 f" -> _update error: {error}",
-                # exc_info=True
+                exc_info=self.exc_info
             )
 
     def _clear_queues(self) -> None:

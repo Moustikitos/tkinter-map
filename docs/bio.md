@@ -1,6 +1,6 @@
 <a id="tkmap.bio"></a>
 
-# tkmap.bio
+# Module tkmap.bio
 
 Basic input/output module.
 
@@ -31,7 +31,7 @@ and starts immediately.
 
 <a id="tkmap.bio.TileWorker.__init__"></a>
 
-#### \_\_init\_\_
+### TileWorker.\_\_init\_\_
 
 ```python
 def __init__(job: queue.Queue, result: queue.Queue, db_name: str,
@@ -47,7 +47,7 @@ def __init__(job: queue.Queue, result: queue.Queue, db_name: str,
 
 <a id="tkmap.bio.TileWorker.kill"></a>
 
-#### kill
+### TileWorker.kill
 
 ```python
 def kill() -> None
@@ -57,7 +57,7 @@ Stop the forever loop
 
 <a id="tkmap.bio.TileWorker.run"></a>
 
-#### run
+### TileWorker.run
 
 ```python
 def run() -> None
@@ -67,7 +67,7 @@ Forever loop
 
 <a id="tkmap.bio.TileWorker.get"></a>
 
-#### get
+### TileWorker.get
 
 ```python
 def get(url: str, headers: dict = {}) -> str
@@ -97,7 +97,7 @@ class Database()
 
 <a id="tkmap.bio.Database.__init__"></a>
 
-#### \_\_init\_\_
+### Database.\_\_init\_\_
 
 ```python
 def __init__(name: str) -> None
@@ -110,7 +110,7 @@ def __init__(name: str) -> None
 
 <a id="tkmap.bio.Database.get"></a>
 
-#### get
+### Database.get
 
 ```python
 def get(zoom: int, row: int, col: int) -> Union[str, bool]
@@ -131,7 +131,7 @@ Get a tile from database using row, column and zoom parameters.
 
 <a id="tkmap.bio.Database.put"></a>
 
-#### put
+### Database.put
 
 ```python
 def put(zoom: int, row: int, col: int, data: str) -> None
@@ -148,7 +148,7 @@ Set tile data in database with row, column and zoom informations.
 
 <a id="tkmap.bio.Database.close"></a>
 
-#### close
+### Database.close
 
 ```python
 def close() -> None
